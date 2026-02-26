@@ -1,0 +1,126 @@
+Keith-coaching/                                   # rename as you like
+├── .github/
+│   └── workflows/
+│       ├── ci.yml
+│       ├── deploy-web.yml
+│       ├── deploy-worker.yml
+│       └── deploy-supabase.yml
+│
+├── apps/
+│   ├── web/                                 # Next.js 14 (App Router)
+│   │   ├── app/
+│   │   │   ├── (marketing)/
+│   │   │   ├── (auth)/
+│   │   │   ├── (dashboard)/                 # settings, event types, bookings
+│   │   │   ├── (public-booking)/            # /{handle}/{eventSlug}
+│   │   │   ├── api/                         # Next API routes (webhooks, helpers)
+│   │   │   │   ├── stripe/
+│   │   │   │   │   └── webhook/route.ts
+│   │   │   │   ├── paystack/
+│   │   │   │   │   └── webhook/route.ts
+│   │   │   │   └── health/route.ts
+│   │   │   └── layout.tsx
+│   │   ├── components/
+│   │   ├── lib/
+│   │   │   ├── supabase/
+│   │   │   │   ├── client.ts                # browser client
+│   │   │   │   ├── server.ts                # server client
+│   │   │   │   └── middleware.ts            # auth refresh + route guards
+│   │   │   ├── payments/
+│   │   │   │   ├── stripe.ts
+│   │   │   │   ├── paystack.ts
+│   │   │   │   └── money.ts
+│   │   │   ├── zoom/
+│   │   │   │   ├── zoom-oauth.ts
+│   │   │   │   └── zoom-api.ts
+│   │   │   ├── scheduling/
+│   │   │   │   ├── compute-availability.ts
+│   │   │   │   ├── generate-slots.ts
+│   │   │   │   ├── detect-conflicts.ts
+│   │   │   │   └── timezone.ts
+│   │   │   ├── validators/
+│   │   │   ├── constants/
+│   │   │   └── utils/
+│   │   ├── middleware.ts
+│   │   ├── public/
+│   │   ├── styles/
+│   │   ├── next.config.js
+│   │   └── package.json
+│   │
+│   └── worker/                              # Node worker (BullMQ/pg-boss)
+│       ├── src/
+│       │   ├── index.ts
+│       │   ├── config/
+│       │   ├── jobs/
+│       │   │   ├── send-reminders.job.ts
+│       │   │   ├── send-followups.job.ts
+│       │   │   ├── reconcile-payments.job.ts
+│       │   │   ├── expire-holds.job.ts
+│       │   │   └── calendar-exports.job.ts
+│       │   ├── queues/
+│       │   ├── providers/
+│       │   │   ├── email.provider.ts
+│       │   │   ├── sms.provider.ts           # optional
+│       │   │   └── whatsapp.provider.ts      # optional
+│       │   └── utils/
+│       ├── package.json
+│       └── Dockerfile
+│
+├── packages/
+│   ├── shared/                              # shared types + zod schemas
+│   │   ├── src/
+│   │   │   ├── types/
+│   │   │   ├── zod/
+│   │   │   ├── constants/
+│   │   │   └── index.ts
+│   │   └── package.json
+│   │
+│   ├── scheduling/                          # pure engine (no DB)
+│   │   ├── src/
+│   │   │   ├── rules.ts                     # weekly rules + buffers + limits
+│   │   │   ├── availability.ts              # merge rules + overrides
+│   │   │   ├── slots.ts                     # slot generation
+│   │   │   ├── conflicts.ts                 # overlap checks
+│   │   │   └── index.ts
+│   │   └── package.json
+│   │
+│   └── ui/                                  # optional shared UI components
+│       ├── src/
+│       └── package.json
+│
+├── supabase/
+│   ├── config.toml
+│   ├── migrations/                          # schema + RLS policies
+│   ├── seed.sql
+│   ├── functions/                           # edge functions (optional)
+│   │   ├── stripe-webhook/
+│   │   ├── paystack-webhook/
+│   │   ├── zoom-oauth-callback/
+│   │   └── booking-confirm/
+│   └── types/                               # generated types
+│       └── database.types.ts
+│
+├── docs/
+│   ├── architecture.md
+│   ├── database-schema.md
+│   ├── rls-policies.md
+│   ├── payments.md
+│   ├── zoom-integration.md
+│   ├── scheduling-engine.md
+│   └── runbooks.md
+│
+├── infra/
+│   ├── docker/
+│   │   └── docker-compose.yml               # local: supabase + redis + mailhog
+│   └── scripts/
+│       ├── gen-types.sh                     # supabase gen types
+│       ├── migrate.sh
+│       └── seed.sh
+│
+├── .env.example
+├── .editorconfig
+├── .gitignore
+├── package.json                              # pnpm workspaces / turborepo root
+├── pnpm-workspace.yaml
+├── turbo.json
+└── README.md
