@@ -1,126 +1,130 @@
-Keith-coaching/                                   # rename as you like
-├── .github/
-│   └── workflows/
-│       ├── ci.yml
-│       ├── deploy-web.yml
-│       ├── deploy-worker.yml
-│       └── deploy-supabase.yml
+booking-platform/
 │
 ├── apps/
-│   ├── web/                                 # Next.js 14 (App Router)
-│   │   ├── app/
-│   │   │   ├── (marketing)/
-│   │   │   ├── (auth)/
-│   │   │   ├── (dashboard)/                 # settings, event types, bookings
-│   │   │   ├── (public-booking)/            # /{handle}/{eventSlug}
-│   │   │   ├── api/                         # Next API routes (webhooks, helpers)
-│   │   │   │   ├── stripe/
-│   │   │   │   │   └── webhook/route.ts
-│   │   │   │   ├── paystack/
-│   │   │   │   │   └── webhook/route.ts
-│   │   │   │   └── health/route.ts
-│   │   │   └── layout.tsx
-│   │   ├── components/
-│   │   ├── lib/
-│   │   │   ├── supabase/
-│   │   │   │   ├── client.ts                # browser client
-│   │   │   │   ├── server.ts                # server client
-│   │   │   │   └── middleware.ts            # auth refresh + route guards
-│   │   │   ├── payments/
-│   │   │   │   ├── stripe.ts
-│   │   │   │   ├── paystack.ts
-│   │   │   │   └── money.ts
-│   │   │   ├── zoom/
-│   │   │   │   ├── zoom-oauth.ts
-│   │   │   │   └── zoom-api.ts
-│   │   │   ├── scheduling/
-│   │   │   │   ├── compute-availability.ts
-│   │   │   │   ├── generate-slots.ts
-│   │   │   │   ├── detect-conflicts.ts
-│   │   │   │   └── timezone.ts
-│   │   │   ├── validators/
-│   │   │   ├── constants/
-│   │   │   └── utils/
-│   │   ├── middleware.ts
-│   │   ├── public/
-│   │   ├── styles/
-│   │   ├── next.config.js
-│   │   └── package.json
 │   │
-│   └── worker/                              # Node worker (BullMQ/pg-boss)
-│       ├── src/
-│       │   ├── index.ts
-│       │   ├── config/
-│       │   ├── jobs/
-│       │   │   ├── send-reminders.job.ts
-│       │   │   ├── send-followups.job.ts
-│       │   │   ├── reconcile-payments.job.ts
-│       │   │   ├── expire-holds.job.ts
-│       │   │   └── calendar-exports.job.ts
-│       │   ├── queues/
-│       │   ├── providers/
-│       │   │   ├── email.provider.ts
-│       │   │   ├── sms.provider.ts           # optional
-│       │   │   └── whatsapp.provider.ts      # optional
-│       │   └── utils/
-│       ├── package.json
-│       └── Dockerfile
+│   ├── web/                          # Next.js frontend (custom Calendly UI)
+│   │   ├── app/
+│   │   │   ├── (public)/
+│   │   │   │   ├── book/
+│   │   │   │   │   ├── page.tsx       # Service selection + calendar UI
+│   │   │   │   │   ├── confirm.tsx    # Booking summary before payment
+│   │   │   │   │   ├── success.tsx    # Post-payment success page
+│   │   │   │   │   └── cancel.tsx
+│   │   │   │   └── reschedule/
+│   │   │   │       └── page.tsx
+│   │   │   │
+│   │   │   ├── api/
+│   │   │   │   ├── booking/
+│   │   │   │   │   ├── create/route.ts
+│   │   │   │   │   ├── reschedule/route.ts
+│   │   │   │   │   └── cancel/route.ts
+│   │   │   │   │
+│   │   │   │   ├── paystack/
+│   │   │   │   │   ├── initialize/route.ts
+│   │   │   │   │   └── webhook/route.ts
+│   │   │   │   │
+│   │   │   │   ├── zoom/
+│   │   │   │   │   ├── create-meeting/route.ts
+│   │   │   │   │   ├── update-meeting/route.ts
+│   │   │   │   │   └── oauth-callback/route.ts
+│   │   │   │   │
+│   │   │   │   └── google/
+│   │   │   │       ├── create-event/route.ts
+│   │   │   │       └── update-event/route.ts
+│   │   │
+│   │   ├── components/
+│   │   │   ├── calendar/
+│   │   │   ├── booking-form/
+│   │   │   ├── payment/
+│   │   │   └── confirmation/
+│   │   │
+│   │   ├── lib/
+│   │   │   ├── supabase.ts
+│   │   │   ├── paystack.ts
+│   │   │   ├── zoom.ts
+│   │   │   ├── google.ts
+│   │   │   ├── validations.ts
+│   │   │   └── utils.ts
+│   │   │
+│   │   └── styles/
+│   │
+│   └── admin/                        # Internal admin dashboard
+│       ├── bookings/
+│       ├── clients/
+│       ├── payments/
+│       ├── analytics/
+│       └── settings/
+│
+├── automation/
+│   ├── n8n/
+│   │   ├── workflows/
+│   │   │   ├── 01-booking-init.json
+│   │   │   ├── 02-paystack-webhook.json
+│   │   │   ├── 03-create-meeting.json
+│   │   │   ├── 04-send-confirmation.json
+│   │   │   ├── 05-reminders.json
+│   │   │   └── 06-followup.json
+│   │   │
+│   │   └── credentials/
+│   │       ├── paystack.json
+│   │       ├── zoom.json
+│   │       ├── google.json
+│   │       └── whatsapp.json
+│   │
+│   └── cron/
+│       ├── release-expired-slots.ts
+│       ├── auto-complete-bookings.ts
+│       └── cleanup-failed-payments.ts
 │
 ├── packages/
-│   ├── shared/                              # shared types + zod schemas
-│   │   ├── src/
-│   │   │   ├── types/
-│   │   │   ├── zod/
-│   │   │   ├── constants/
-│   │   │   └── index.ts
-│   │   └── package.json
+│   ├── db/
+│   │   ├── schema.sql
+│   │   ├── migrations/
+│   │   └── seeds/
 │   │
-│   ├── scheduling/                          # pure engine (no DB)
-│   │   ├── src/
-│   │   │   ├── rules.ts                     # weekly rules + buffers + limits
-│   │   │   ├── availability.ts              # merge rules + overrides
-│   │   │   ├── slots.ts                     # slot generation
-│   │   │   ├── conflicts.ts                 # overlap checks
-│   │   │   └── index.ts
-│   │   └── package.json
+│   ├── types/
+│   │   ├── booking.ts
+│   │   ├── payment.ts
+│   │   ├── meeting.ts
+│   │   └── client.ts
 │   │
-│   └── ui/                                  # optional shared UI components
-│       ├── src/
-│       └── package.json
+│   └── shared/
+│       ├── constants.ts
+│       ├── enums.ts
+│       └── helpers.ts
 │
-├── supabase/
-│   ├── config.toml
-│   ├── migrations/                          # schema + RLS policies
-│   ├── seed.sql
-│   ├── functions/                           # edge functions (optional)
-│   │   ├── stripe-webhook/
-│   │   ├── paystack-webhook/
-│   │   ├── zoom-oauth-callback/
-│   │   └── booking-confirm/
-│   └── types/                               # generated types
-│       └── database.types.ts
+├── integrations/
+│   ├── paystack/
+│   │   ├── initialize.ts
+│   │   ├── verify.ts
+│   │   └── webhook-handler.ts
+│   │
+│   ├── zoom/
+│   │   ├── oauth.ts
+│   │   ├── create-meeting.ts
+│   │   ├── update-meeting.ts
+│   │   └── delete-meeting.ts
+│   │
+│   └── google/
+│       ├── create-event.ts
+│       ├── update-event.ts
+│       └── calendar-auth.ts
+│
+├── env/
+│   ├── .env.local
+│   ├── .env.production
+│   └── example.env
 │
 ├── docs/
 │   ├── architecture.md
-│   ├── database-schema.md
-│   ├── rls-policies.md
-│   ├── payments.md
-│   ├── zoom-integration.md
-│   ├── scheduling-engine.md
-│   └── runbooks.md
+│   ├── payment-flow.md
+│   ├── meeting-flow.md
+│   ├── webhook-idempotency.md
+│   └── security.md
 │
-├── infra/
-│   ├── docker/
-│   │   └── docker-compose.yml               # local: supabase + redis + mailhog
-│   └── scripts/
-│       ├── gen-types.sh                     # supabase gen types
-│       ├── migrate.sh
-│       └── seed.sh
+├── docker/
+│   ├── Dockerfile.web
+│   ├── Dockerfile.n8n
+│   └── docker-compose.yml
 │
-├── .env.example
-├── .editorconfig
-├── .gitignore
-├── package.json                              # pnpm workspaces / turborepo root
-├── pnpm-workspace.yaml
-├── turbo.json
 └── README.md
